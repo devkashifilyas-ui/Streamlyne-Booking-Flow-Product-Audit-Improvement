@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Streamlyne — Product Thinking Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f4f1;
+    --surface: #ffffff;
+    --border: #e2e0da;
+    --border-strong: #c8c5bc;
+    --text-primary: #1a1916;
+    --text-secondary: #6b6860;
+    --text-muted: #a8a59e;
+    --accent: #1a6b45;
+    --accent-light: #e8f5ee;
+    --accent-hover: #155a38;
+    --danger: #c0392b;
+    --danger-light: #fdf0ee;
+    --warn: #b45309;
+    --warn-light: #fef9ee;
+    --before-accent: #d4380d;
+    --before-light: #fff2ee;
+    --after-accent: #1a6b45;
+    --after-light: #e8f5ee;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+    --shadow-lg: 0 12px 32px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.04);
+    --radius: 10px;
+    --radius-sm: 6px;
+    --radius-lg: 16px;
+    --font: 'DM Sans', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+    --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: var(--font);
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── TOP NAV ── */
+  .topbar {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .logo {
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .logo-mark {
+    width: 24px; height: 24px;
+    background: var(--text-primary);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-mark svg { width: 14px; height: 14px; fill: white; }
+
+  .nav-tag {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--accent);
+    background: var(--accent-light);
+    border: 1px solid #b6dfca;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nav-right { display: flex; align-items: center; gap: 12px; }
+
+  .toggle-group {
+    display: flex;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 3px;
+    gap: 2px;
+  }
+
+  .toggle-btn {
+    font-family: var(--font);
+    font-size: 12.5px;
+    font-weight: 500;
+    padding: 5px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: var(--transition);
+    white-space: nowrap;
+  }
+
+  .toggle-btn.active {
+    background: var(--surface);
+    color: var(--text-primary);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* ── HERO SECTION ── */
+  .hero {
+    padding: 40px 32px 0;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 13px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text-primary);
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+
+  .hero p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    font-weight: 300;
+  }
+
+  /* ── SPLIT VIEW ── */
+  .split-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 24px 32px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .split-container.single { grid-template-columns: 1fr; }
+  .split-container.single .panel:not(.active-panel) { display: none; }
+  .split-container.single .panel.active-panel { max-width: 640px; margin: 0 auto; width: 100%; }
+
+  .panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+
+  .panel-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .badge-before {
+    background: var(--before-light);
+    color: var(--before-accent);
+    border: 1px solid #f4b8a4;
+  }
+
+  .badge-after {
+    background: var(--after-light);
+    color: var(--after-accent);
+    border: 1px solid #b6dfca;
+  }
+
+  .panel-title {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .panel-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .panel-card.before-card { border-top: 3px solid var(--before-accent); }
+  .panel-card.after-card { border-top: 3px solid var(--after-accent); }
+
+  /* ── BEFORE VERSION ── */
+  .before-inner {
+    padding: 32px 28px;
+  }
+
+  .before-inner h2 {
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    color: var(--text-primary);
+  }
+
+  .b-step {
+    margin-bottom: 20px;
+  }
+
+  .b-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+    font-family: var(--mono);
+  }
+
+  .b-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 13px;
+    background: #fafafa;
+    outline: none;
+    transition: var(--transition);
+  }
+
+  .b-input:focus { border-color: #999; }
+
+  .b-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  .b-select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: var(--font);
+    font-size: 13px;
+    background: #fafafa;
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+
+  .b-checkbox-group { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+  .b-checkbox { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-secondary); cursor: pointer; }
+  .b-checkbox input { cursor: pointer; }
+
+  .b-notice {
+    background: #fffbf0;
+    border: 1px solid #e9d8a6;
+    border-radius: 4px;
+    padding: 10px 12px;
+    font-size: 11.5px;
+    color: #806000;
+    margin: 20px 0;
+    line-height: 1.5;
+  }
+
+  .b-btn-primary {
+    width: 100%;
+    padding: 10px;
+    background: #2563eb;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: var(--font);
+    font-size: 13.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 8px;
+  }
+
+  .b-btn-primary:hover { background: #1d4ed8; }
+  .b-btn-primary:disabled { background: #93c5fd; cursor: not-allowed; }
+
+  .b-btn-secondary {
+    width: 100%;
+    padding: 9px;
+    background: transparent;
+    color: #6b7280;
+    border: 1px solid #d1d5db;
+    border-radius: 5px;
+    font-family: var(--font);
+    font-size: 13px;
+    cursor: pointer;
+    transition: var(--transition);
+    margin-bottom: 8px;
+  }
+
+  .b-btn-secondary:hover { background: #f9fafb; }
+
+  .b-step-indicator {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 20px;
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: var(--mono);
+  }
+
+  .b-step-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    background: #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    color: #9ca3af;
+  }
+
+  .b-step-dot.done { background: #bfdbfe; color: #1d4ed8; }
+  .b-step-dot.active { background: #2563eb; color: white; }
+  .b-step-line { flex: 1; height: 1px; background: #e5e7eb; align-self: center; }
+
+  .b-error { color: #dc2626; font-size: 10.5px; margin-top: 3px; display: none; }
+  .b-error.show { display: block; }
+
+  .b-footer-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-size: 11px;
+    color: #9ca3af;
+  }
+
+  .b-footer-links a { color: #6b7280; text-decoration: underline; cursor: pointer; }
+
+  /* Before steps */
+  .b-screen { display: none; }
+  .b-screen.active { display: block; }
+
+  /* ── AFTER VERSION ── */
+  .after-inner { padding: 28px 28px 32px; }
+
+  .a-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+  }
+
+  .a-header-left h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  .a-header-left p {
+    font-size: 12.5px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  .a-steps-pill {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    background: var(--accent-light);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid #b6dfca;
+  }
+
+  /* Progress bar */
+  .a-progress {
+    height: 3px;
+    background: var(--border);
+    border-radius: 99px;
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+
+  .a-progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Form field */
+  .a-field { margin-bottom: 16px; }
+
+  .a-field label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .a-field label .required {
+    color: var(--accent);
+    font-size: 10px;
+    font-family: var(--mono);
+    background: var(--accent-light);
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  .a-field label .optional {
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 400;
+  }
+
+  .a-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--text-primary);
+    background: var(--surface);
+    outline: none;
+    transition: border-color var(--transition), box-shadow var(--transition);
+    -webkit-appearance: none;
+  }
+
+  .a-input::placeholder { color: var(--text-muted); }
+  .a-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(26,107,69,0.1);
+  }
+  .a-input.error { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(192,57,43,0.08); }
+  .a-input.success { border-color: var(--accent); }
+
+  .a-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* Time slot picker */
+  .a-slots {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .a-slot {
+    padding: 9px 6px;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 12.5px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    text-align: center;
+    cursor: pointer;
+    transition: var(--transition);
+    background: var(--surface);
+    user-select: none;
+  }
+
+  .a-slot:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
+  .a-slot.selected { border-color: var(--accent); background: var(--accent); color: white; }
+  .a-slot.unavailable { background: var(--bg); color: var(--text-muted); cursor: not-allowed; text-decoration: line-through; }
+
+  /* After screens */
+  .a-screen { display: none; }
+  .a-screen.active { display: block; animation: fadeSlide 250ms ease forwards; }
+
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Action row */
+  .a-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .a-btn-primary {
+    flex: 1;
+    padding: 11px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .a-btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,107,69,0.25); }
+  .a-btn-primary:active { transform: translateY(0); }
+  .a-btn-primary:disabled { background: #a3c9b7; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .a-btn-back {
+    padding: 11px 16px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .a-btn-back:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+  /* Loading spinner */
+  .spinner {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 600ms linear infinite;
+    display: none;
+  }
+
+  .a-btn-primary.loading .spinner { display: block; }
+  .a-btn-primary.loading .btn-text { display: none; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Field hint */
+  .a-hint {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+
+  .a-error-msg {
+    font-size: 11.5px;
+    color: var(--danger);
+    margin-top: 5px;
+    display: none;
+  }
+
+  .a-error-msg.show { display: block; }
+
+  /* Summary step */
+  .a-summary {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 18px;
+    margin-bottom: 18px;
+  }
+
+  .a-summary-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 12px;
+  }
+
+  .a-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+
+  .a-summary-row:last-child { border-bottom: none; }
+  .a-summary-row .key { color: var(--text-secondary); }
+  .a-summary-row .val { font-weight: 500; color: var(--text-primary); text-align: right; }
+
+  .a-edit-link {
+    font-size: 11px;
+    color: var(--accent);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .a-edit-link:hover { text-decoration: underline; }
+
+  /* Success screen */
+  .success-screen {
+    text-align: center;
+    padding: 16px 0 8px;
+  }
+
+  .success-icon {
+    width: 56px; height: 56px;
+    background: var(--accent-light);
+    border: 2px solid #b6dfca;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    animation: popIn 400ms cubic-bezier(0.34,1.56,0.64,1) forwards;
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.6); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  .success-icon svg { width: 26px; height: 26px; }
+
+  .success-screen h3 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .success-screen p {
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .success-details {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    text-align: left;
+    margin-bottom: 20px;
+  }
+
+  .success-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 13px;
+  }
+
+  .success-detail-item .icon { color: var(--accent); font-size: 15px; }
+  .success-detail-item .label { color: var(--text-secondary); flex: 1; }
+  .success-detail-item .value { font-weight: 500; color: var(--text-primary); }
+
+  .a-btn-ghost {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    color: var(--text-secondary);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+
+  .a-btn-ghost:hover { border-color: var(--border-strong); color: var(--text-primary); }
+
+  /* ── EXPLANATION PANEL ── */
+  .explanation {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 32px 48px;
+  }
+
+  .exp-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .exp-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .exp-card-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+
+  .exp-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    flex-shrink: 0;
+  }
+
+  .exp-icon.red { background: var(--before-light); }
+  .exp-icon.green { background: var(--after-light); }
+  .exp-icon.blue { background: #eff6ff; }
+
+  .exp-card-header h3 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .exp-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .exp-list li {
+    font-size: 12.5px;
+    color: var(--text-secondary);
+    line-height: 1.45;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  .exp-list li::before {
+    content: '→';
+    color: var(--text-muted);
+    font-size: 11px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .exp-list.improvements li::before { content: '✓'; color: var(--accent); }
+  .exp-list.issues li::before { content: '×'; color: var(--before-accent); }
+
+  .exp-metric {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .exp-metric:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .exp-metric-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex: 1;
+  }
+
+  .exp-metric-before {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--before-accent);
+    background: var(--before-light);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  .exp-metric-arrow { font-size: 11px; color: var(--text-muted); }
+
+  .exp-metric-after {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--after-accent);
+    background: var(--after-light);
+    padding: 2px 7px;
+    border-radius: 4px;
+  }
+
+  /* ── BEFORE STYLING ISSUES (intentional) ── */
+  .b-cramped { margin-bottom: 8px; } /* too tight */
+  .b-confusing-label { font-size: 9px; color: #bbb; margin-bottom: 2px; letter-spacing: 0; }
+  .b-tiny-hint { font-size: 9px; color: #ccc; margin-top: 1px; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    .split-container { grid-template-columns: 1fr; }
+    .exp-grid { grid-template-columns: 1fr; }
+    .hero, .split-container, .explanation { padding-left: 20px; padding-right: 20px; }
+    .topbar { padding: 0 20px; }
+    .a-slots { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- TOP NAV -->
+<nav class="topbar">
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 14 14"><path d="M2 2h4v4H2zm6 0h4v4H8zm-6 6h4v4H2zm6 0h4v4H8z"/></svg>
+    </div>
+    Streamlyne
+  </div>
+  <div class="nav-right">
+    <span class="nav-tag">Product Thinking Demo</span>
+    <div class="toggle-group">
+      <button class="toggle-btn active" onclick="setView('split')" id="btn-split">Split view</button>
+      <button class="toggle-btn" onclick="setView('before')" id="btn-before">Before</button>
+      <button class="toggle-btn" onclick="setView('after')" id="btn-after">After</button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-title">UX Case Study — Session Booking Flow</div>
+  <h1>Before &amp; After: Product Improvement</h1>
+  <p>Same feature. Radically different experience. See the design decisions that matter.</p>
+</div>
+
+<!-- MAIN SPLIT -->
+<div class="split-container" id="split-container">
+
+  <!-- ══ BEFORE PANEL ══ -->
+  <div class="panel" id="panel-before">
+    <div class="panel-header">
+      <span class="panel-badge badge-before">Before</span>
+      <span class="panel-title">Original experience</span>
+    </div>
+    <div class="panel-card before-card">
+      <div class="before-inner">
+
+        <!-- Step indicators (confusing) -->
+        <div class="b-step-indicator">
+          <div class="b-step-dot done">1</div>
+          <div class="b-step-line"></div>
+          <div class="b-step-dot active">2</div>
+          <div class="b-step-line"></div>
+          <div class="b-step-dot">3</div>
+          <div class="b-step-line"></div>
+          <div class="b-step-dot">4</div>
+          <div class="b-step-line"></div>
+          <div class="b-step-dot">5</div>
+          <span style="font-size:10px;color:#ccc;align-self:center;">Step 2 of 5</span>
+        </div>
+
+        <!-- Screen 1: Personal info -->
+        <div class="b-screen active" id="b-s1">
+          <h2>Book a Session</h2>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">FIRST_NAME *</div>
+            <input class="b-input" type="text" placeholder="Enter first name" id="b-fname">
+            <div class="b-error" id="b-fname-err">This field is required</div>
+          </div>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">LAST_NAME *</div>
+            <input class="b-input" type="text" placeholder="Enter last name" id="b-lname">
+          </div>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">EMAIL_ADDRESS *</div>
+            <input class="b-input" type="text" placeholder="Enter email" id="b-email">
+            <div class="b-tiny-hint">Must be a valid email address (e.g. you@example.com)</div>
+          </div>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">PHONE_NUMBER</div>
+            <input class="b-input" type="text" placeholder="+1 (___) ___-____">
+            <div class="b-tiny-hint">Optional. Include country code</div>
+          </div>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">ORGANIZATION</div>
+            <input class="b-input" type="text" placeholder="Company / school name">
+          </div>
+
+          <div class="b-step b-cramped">
+            <div class="b-confusing-label">HOW DID YOU HEAR ABOUT US</div>
+            <select class="b-select">
+              <option value="">-- Please select one --</option>
+              <option>Google Search</option>
+              <option>Social Media</option>
+              <option>Friend or Colleague</option>
+              <option>Advertisement</option>
+              <option>Other</option>
+            </select>
+          </div>
+
+          <div class="b-notice">
+            ⚠ Please ensure all required fields marked with * are filled in before proceeding to the next step. Incomplete submissions cannot be processed and you will be returned to this page.
+          </div>
+
+          <button class="b-btn-primary" onclick="bNext(1)">Next →</button>
+          <button class="b-btn-secondary">Save Draft</button>
+          <button class="b-btn-secondary" style="color:#999;border-color:#eee;">Cancel booking</button>
+
+          <div class="b-footer-links">
+            <a>Terms of Service</a>
+            <a>Privacy Policy</a>
+            <a>Help Center</a>
+          </div>
+        </div>
+
+        <!-- Screen 2: Date/time -->
+        <div class="b-screen" id="b-s2">
+          <h2>Select Date &amp; Time</h2>
+
+          <div class="b-step">
+            <div class="b-confusing-label">PREFERRED_DATE *</div>
+            <input class="b-input" type="text" placeholder="DD/MM/YYYY">
+            <div class="b-tiny-hint">Format: DD/MM/YYYY. Weekends not available.</div>
+          </div>
+
+          <div class="b-row">
+            <div>
+              <div class="b-confusing-label">START_TIME</div>
+              <select class="b-select">
+                <option>-- Hour --</option>
+                <option>09:00</option><option>09:30</option><option>10:00</option>
+                <option>10:30</option><option>11:00</option><option>11:30</option>
+                <option>14:00</option><option>14:30</option><option>15:00</option>
+              </select>
+            </div>
+            <div>
+              <div class="b-confusing-label">DURATION_MINS</div>
+              <select class="b-select">
+                <option>-- Select --</option>
+                <option>30</option><option>45</option><option>60</option><option>90</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="b-step" style="margin-top:14px">
+            <div class="b-confusing-label">SESSION_TYPE *</div>
+            <div class="b-checkbox-group">
+              <label class="b-checkbox"><input type="checkbox"> Online (Zoom)</label>
+              <label class="b-checkbox"><input type="checkbox"> In-Person (Main Campus)</label>
+              <label class="b-checkbox"><input type="checkbox"> In-Person (Satellite Office)</label>
+              <label class="b-checkbox"><input type="checkbox"> Phone Call</label>
+              <label class="b-checkbox"><input type="checkbox"> Hybrid</label>
+            </div>
+          </div>
+
+          <div class="b-notice" style="margin-top:18px">
+            ℹ Sessions must be booked at least 48 hours in advance. Same-day and next-day appointments are not available through this form. Contact us directly for urgent requests.
+          </div>
+
+          <button class="b-btn-primary" onclick="bNext(2)">Continue to Step 3 →</button>
+          <button class="b-btn-secondary" onclick="bBack(2)">← Go Back to Previous Step</button>
+        </div>
+
+        <!-- Screen 3: Fake loading then success -->
+        <div class="b-screen" id="b-s3">
+          <h2>Additional Information</h2>
+          <div class="b-step">
+            <div class="b-confusing-label">SPECIAL_REQUIREMENTS</div>
+            <textarea class="b-input" rows="3" placeholder="Any special requirements, accessibility needs, or notes..." style="resize:vertical"></textarea>
+          </div>
+          <div class="b-step">
+            <div class="b-confusing-label">PROMO_CODE</div>
+            <input class="b-input" type="text" placeholder="Enter promo code if applicable">
+          </div>
+          <div class="b-step">
+            <div class="b-label" style="font-size:11px;color:#555">Agreement *</div>
+            <div class="b-checkbox-group">
+              <label class="b-checkbox"><input type="checkbox"> I agree to the terms and conditions</label>
+              <label class="b-checkbox"><input type="checkbox"> I consent to receiving email communications</label>
+              <label class="b-checkbox"><input type="checkbox"> I confirm the information I provided is accurate</label>
+            </div>
+          </div>
+          <div id="b-loading-msg" style="display:none;text-align:center;padding:20px;color:#999;font-size:13px;">Processing your request...</div>
+          <div id="b-success-msg" style="display:none;background:#f0fdf4;border:1px solid #86efac;border-radius:5px;padding:16px;text-align:center;color:#166534;font-size:13px;margin-top:10px;">
+            ✓ Your request has been received. You will receive a confirmation email within 2-3 business days.
+          </div>
+          <button class="b-btn-primary" id="b-submit-btn" onclick="bSubmit()">Submit Booking Request</button>
+          <button class="b-btn-secondary" onclick="bBack(3)">← Back</button>
+          <div style="font-size:10px;color:#ccc;margin-top:12px;text-align:center;">After submitting, a staff member will manually confirm your booking via email.</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ AFTER PANEL ══ -->
+  <div class="panel" id="panel-after">
+    <div class="panel-header">
+      <span class="panel-badge badge-after">After</span>
+      <span class="panel-title">Improved experience</span>
+    </div>
+    <div class="panel-card after-card">
+      <div class="after-inner">
+
+        <!-- Progress bar -->
+        <div class="a-header">
+          <div class="a-header-left">
+            <h2 id="a-title">Book a Session</h2>
+            <p id="a-subtitle">Takes about 60 seconds</p>
+          </div>
+          <span class="a-steps-pill" id="a-step-label">Step 1 of 2</span>
+        </div>
+
+        <div class="a-progress">
+          <div class="a-progress-fill" id="a-progress" style="width: 50%"></div>
+        </div>
+
+        <!-- Screen 1: Essentials only -->
+        <div class="a-screen active" id="a-s1">
+          <div class="a-row">
+            <div class="a-field">
+              <label>First name <span class="required">required</span></label>
+              <input class="a-input" type="text" placeholder="Alex" id="a-fname" autocomplete="given-name">
+              <div class="a-error-msg" id="a-fname-err">Please enter your first name</div>
+            </div>
+            <div class="a-field">
+              <label>Last name <span class="required">required</span></label>
+              <input class="a-input" type="text" placeholder="Johnson" id="a-lname" autocomplete="family-name">
+              <div class="a-error-msg" id="a-lname-err">Please enter your last name</div>
+            </div>
+          </div>
+
+          <div class="a-field">
+            <label>Email <span class="required">required</span></label>
+            <input class="a-input" type="email" placeholder="you@example.com" id="a-email" autocomplete="email">
+            <div class="a-hint">We'll send confirmation to this address</div>
+            <div class="a-error-msg" id="a-email-err">Please enter a valid email</div>
+          </div>
+
+          <div class="a-field">
+            <label>Session type <span class="required">required</span></label>
+            <div class="a-slots" id="a-session-types">
+              <div class="a-slot" data-val="online" onclick="selectSlot(this,'type')">📹 Online</div>
+              <div class="a-slot" data-val="inperson" onclick="selectSlot(this,'type')">🏢 In-person</div>
+              <div class="a-slot" data-val="phone" onclick="selectSlot(this,'type')">📞 Phone</div>
+            </div>
+            <div class="a-error-msg" id="a-type-err">Please select a session type</div>
+          </div>
+
+          <div class="a-actions">
+            <button class="a-btn-primary" onclick="aNext(1)">
+              <span class="btn-text">Continue →</span>
+              <div class="spinner"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Screen 2: Date & time (smart) -->
+        <div class="a-screen" id="a-s2">
+          <div class="a-field">
+            <label>Preferred date <span class="required">required</span></label>
+            <input class="a-input" type="date" id="a-date" min="">
+            <div class="a-hint">Weekdays only — earliest available is 2 days from now</div>
+            <div class="a-error-msg" id="a-date-err">Please select a date</div>
+          </div>
+
+          <div class="a-field">
+            <label>Available times <span class="required">required</span></label>
+            <div class="a-slots" id="a-time-slots">
+              <div class="a-slot" data-val="9:00" onclick="selectSlot(this,'time')">9:00 AM</div>
+              <div class="a-slot" data-val="10:00" onclick="selectSlot(this,'time')">10:00 AM</div>
+              <div class="a-slot unavailable">11:00 AM</div>
+              <div class="a-slot" data-val="14:00" onclick="selectSlot(this,'time')">2:00 PM</div>
+              <div class="a-slot" data-val="15:00" onclick="selectSlot(this,'time')">3:00 PM</div>
+              <div class="a-slot" data-val="16:00" onclick="selectSlot(this,'time')">4:00 PM</div>
+            </div>
+            <div class="a-error-msg" id="a-time-err">Please select a time slot</div>
+          </div>
+
+          <div class="a-field">
+            <label>Duration <span class="required">required</span></label>
+            <div class="a-slots" style="grid-template-columns: repeat(3, 1fr);" id="a-duration-slots">
+              <div class="a-slot" data-val="30" onclick="selectSlot(this,'duration')">30 min</div>
+              <div class="a-slot" data-val="60" onclick="selectSlot(this,'duration')">60 min</div>
+              <div class="a-slot" data-val="90" onclick="selectSlot(this,'duration')">90 min</div>
+            </div>
+            <div class="a-error-msg" id="a-dur-err">Please select a duration</div>
+          </div>
+
+          <div class="a-actions">
+            <button class="a-btn-back" onclick="aBack(2)">
+              ← Back
+            </button>
+            <button class="a-btn-primary" onclick="aNext(2)">
+              <span class="btn-text">Review &amp; Confirm →</span>
+              <div class="spinner"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Screen 3: Review -->
+        <div class="a-screen" id="a-s3">
+          <div class="a-summary">
+            <div class="a-summary-title">Booking summary</div>
+            <div class="a-summary-row">
+              <span class="key">Name</span>
+              <span class="val" id="sum-name">—</span>
+            </div>
+            <div class="a-summary-row">
+              <span class="key">Email</span>
+              <span class="val" id="sum-email">—</span>
+            </div>
+            <div class="a-summary-row">
+              <span class="key">Type</span>
+              <span class="val" id="sum-type">—</span>
+            </div>
+            <div class="a-summary-row">
+              <span class="key">Date</span>
+              <span class="val" id="sum-date">—</span>
+            </div>
+            <div class="a-summary-row">
+              <span class="key">Time</span>
+              <span class="val" id="sum-time">—</span>
+            </div>
+            <div class="a-summary-row">
+              <span class="key">Duration</span>
+              <span class="val" id="sum-duration">—</span>
+            </div>
+          </div>
+
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px;line-height:1.5;">
+            Your session will be confirmed instantly. A calendar invite will be sent to your email.
+          </div>
+
+          <div class="a-actions">
+            <button class="a-btn-back" onclick="aBack(3)">← Edit</button>
+            <button class="a-btn-primary" id="a-confirm-btn" onclick="aConfirm()">
+              <span class="btn-text">Confirm Booking</span>
+              <div class="spinner"></div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Screen 4: Success -->
+        <div class="a-screen" id="a-s4">
+          <div class="success-screen">
+            <div class="success-icon">
+              <svg viewBox="0 0 26 26" fill="none" stroke="#1a6b45" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 13l5 5L21 7"/>
+              </svg>
+            </div>
+            <h3>Session booked!</h3>
+            <p>Your session is confirmed. Check your inbox — a calendar invite is on its way.</p>
+
+            <div class="success-details">
+              <div class="success-detail-item">
+                <span class="icon">📅</span>
+                <span class="label">Date &amp; Time</span>
+                <span class="value" id="succ-datetime">—</span>
+              </div>
+              <div class="success-detail-item">
+                <span class="icon">⏱</span>
+                <span class="label">Duration</span>
+                <span class="value" id="succ-duration">—</span>
+              </div>
+              <div class="success-detail-item">
+                <span class="icon">📧</span>
+                <span class="label">Confirmation sent to</span>
+                <span class="value" id="succ-email">—</span>
+              </div>
+            </div>
+
+            <button class="a-btn-ghost" onclick="aReset()">Book another session</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EXPLANATION PANEL -->
+<div class="explanation">
+  <div class="exp-title">Design Analysis</div>
+  <div class="exp-grid">
+
+    <div class="exp-card">
+      <div class="exp-card-header">
+        <div class="exp-icon red">🔴</div>
+        <h3>What was wrong</h3>
+      </div>
+      <ul class="exp-list issues">
+        <li>5-step flow for a simple booking — excessive friction</li>
+        <li>Machine-style labels (FIRST_NAME, EMAIL_ADDRESS) feel cold</li>
+        <li>3 action buttons per step creates decision paralysis</li>
+        <li>Vague success: "you'll hear back in 2–3 business days"</li>
+        <li>Warning notice that blames the user pre-emptively</li>
+        <li>Tiny, low-contrast helper text — barely readable</li>
+        <li>Date field requires manual format (DD/MM/YYYY)</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-card-header">
+        <div class="exp-icon green">✅</div>
+        <h3>What changed</h3>
+      </div>
+      <ul class="exp-list improvements">
+        <li>Collapsed to 2 steps — only essential fields shown</li>
+        <li>Human labels with clear required indicators</li>
+        <li>Visual slot pickers replace freeform inputs</li>
+        <li>Inline progress bar sets clear expectations</li>
+        <li>Instant confirmation — no manual processing step</li>
+        <li>Summary review screen before final submit</li>
+        <li>Native date picker with smart min-date constraint</li>
+      </ul>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-card-header">
+        <div class="exp-icon blue">📊</div>
+        <h3>Impact on experience</h3>
+      </div>
+      <div>
+        <div class="exp-metric">
+          <span class="exp-metric-label">Steps to complete</span>
+          <span class="exp-metric-before">5 steps</span>
+          <span class="exp-metric-arrow">→</span>
+          <span class="exp-metric-after">2 steps</span>
+        </div>
+        <div class="exp-metric">
+          <span class="exp-metric-label">Form fields</span>
+          <span class="exp-metric-before">11 fields</span>
+          <span class="exp-metric-arrow">→</span>
+          <span class="exp-metric-after">6 fields</span>
+        </div>
+        <div class="exp-metric">
+          <span class="exp-metric-label">Confirmation time</span>
+          <span class="exp-metric-before">2–3 days</span>
+          <span class="exp-metric-arrow">→</span>
+          <span class="exp-metric-after">Instant</span>
+        </div>
+        <div class="exp-metric">
+          <span class="exp-metric-label">Cognitive load</span>
+          <span class="exp-metric-before">High</span>
+          <span class="exp-metric-arrow">→</span>
+          <span class="exp-metric-after">Low</span>
+        </div>
+        <div class="exp-metric">
+          <span class="exp-metric-label">Error feedback</span>
+          <span class="exp-metric-before">None</span>
+          <span class="exp-metric-arrow">→</span>
+          <span class="exp-metric-after">Inline</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ── VIEW TOGGLE ──
+  function setView(mode) {
+    const container = document.getElementById('split-container');
+    const panelBefore = document.getElementById('panel-before');
+    const panelAfter = document.getElementById('panel-after');
+    const btns = ['split','before','after'];
+    btns.forEach(b => document.getElementById('btn-'+b).classList.remove('active'));
+    document.getElementById('btn-'+mode).classList.add('active');
+
+    if (mode === 'split') {
+      container.className = 'split-container';
+      panelBefore.classList.remove('active-panel');
+      panelAfter.classList.remove('active-panel');
+    } else {
+      container.className = 'split-container single';
+      panelBefore.classList.toggle('active-panel', mode === 'before');
+      panelAfter.classList.toggle('active-panel', mode === 'after');
+    }
+  }
+
+  // ── BEFORE LOGIC ──
+  let bCurrentScreen = 1;
+
+  function bShowScreen(n) {
+    document.querySelectorAll('.b-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('b-s' + n).classList.add('active');
+    bCurrentScreen = n;
+  }
+
+  function bNext(from) {
+    if (from === 1) {
+      const fname = document.getElementById('b-fname').value;
+      const email = document.getElementById('b-email').value;
+      const err = document.getElementById('b-fname-err');
+      if (!fname.trim()) {
+        err.classList.add('show');
+        return;
+      }
+      err.classList.remove('show');
+      bShowScreen(2);
+    } else if (from === 2) {
+      bShowScreen(3);
+    }
+  }
+
+  function bBack(from) {
+    bShowScreen(from - 1);
+  }
+
+  function bSubmit() {
+    const btn = document.getElementById('b-submit-btn');
+    const loading = document.getElementById('b-loading-msg');
+    const success = document.getElementById('b-success-msg');
+    btn.disabled = true;
+    btn.textContent = 'Submitting...';
+    loading.style.display = 'block';
+    setTimeout(() => {
+      loading.style.display = 'none';
+      success.style.display = 'block';
+      btn.style.display = 'none';
+    }, 2200);
+  }
+
+  // ── AFTER LOGIC ──
+  const aState = {
+    fname: '', lname: '', email: '',
+    type: null, date: '', time: null, duration: null
+  };
+
+  let aCurrentScreen = 1;
+
+  const progressMap = { 1: 50, 2: 75, 3: 90, 4: 100 };
+  const titleMap = {
+    1: ['Book a Session', 'Takes about 60 seconds'],
+    2: ['Pick your time', 'Choose a date and slot'],
+    3: ['Almost done', 'Review your details'],
+    4: ['All set!', '']
+  };
+  const stepMap = { 1: 'Step 1 of 2', 2: 'Step 2 of 2', 3: 'Confirm', 4: 'Done' };
+
+  function aShowScreen(n) {
+    document.querySelectorAll('.a-screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('a-s' + n).classList.add('active');
+    aCurrentScreen = n;
+    document.getElementById('a-progress').style.width = progressMap[n] + '%';
+    document.getElementById('a-title').textContent = titleMap[n][0];
+    document.getElementById('a-subtitle').textContent = titleMap[n][1];
+    document.getElementById('a-step-label').textContent = stepMap[n];
+  }
+
+  function selectSlot(el, group) {
+    const parent = el.closest('.a-slots') || el.parentElement;
+    parent.querySelectorAll('.a-slot:not(.unavailable)').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    if (group === 'type') aState.type = el.dataset.val;
+    else if (group === 'time') aState.time = el.dataset.val;
+    else if (group === 'duration') aState.duration = el.dataset.val;
+  }
+
+  function aValidate1() {
+    let ok = true;
+    const fname = document.getElementById('a-fname').value.trim();
+    const lname = document.getElementById('a-lname').value.trim();
+    const email = document.getElementById('a-email').value.trim();
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    document.getElementById('a-fname-err').classList.toggle('show', !fname);
+    if (!fname) ok = false; else aState.fname = fname;
+
+    document.getElementById('a-lname-err').classList.toggle('show', !lname);
+    if (!lname) ok = false; else aState.lname = lname;
+
+    const emailOk = emailRe.test(email);
+    document.getElementById('a-email-err').classList.toggle('show', !emailOk);
+    if (!emailOk) ok = false; else aState.email = email;
+
+    document.getElementById('a-type-err').classList.toggle('show', !aState.type);
+    if (!aState.type) ok = false;
+
+    return ok;
+  }
+
+  function aValidate2() {
+    let ok = true;
+    const date = document.getElementById('a-date').value;
+    document.getElementById('a-date-err').classList.toggle('show', !date);
+    if (!date) ok = false; else aState.date = date;
+
+    document.getElementById('a-time-err').classList.toggle('show', !aState.time);
+    if (!aState.time) ok = false;
+
+    document.getElementById('a-dur-err').classList.toggle('show', !aState.duration);
+    if (!aState.duration) ok = false;
+
+    return ok;
+  }
+
+  function aNext(from) {
+    if (from === 1) {
+      if (!aValidate1()) return;
+      aShowScreen(2);
+    } else if (from === 2) {
+      if (!aValidate2()) return;
+      // Populate summary
+      const typeLabels = { online: '📹 Online', inperson: '🏢 In-person', phone: '📞 Phone' };
+      const dateObj = new Date(aState.date + 'T12:00:00');
+      const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+      const timeStr = aState.time === '9:00' ? '9:00 AM' : aState.time === '10:00' ? '10:00 AM' : aState.time === '14:00' ? '2:00 PM' : aState.time === '15:00' ? '3:00 PM' : '4:00 PM';
+      document.getElementById('sum-name').textContent = aState.fname + ' ' + aState.lname;
+      document.getElementById('sum-email').textContent = aState.email;
+      document.getElementById('sum-type').textContent = typeLabels[aState.type] || aState.type;
+      document.getElementById('sum-date').textContent = dateStr;
+      document.getElementById('sum-time').textContent = timeStr;
+      document.getElementById('sum-duration').textContent = aState.duration + ' minutes';
+      aShowScreen(3);
+    }
+  }
+
+  function aBack(from) {
+    aShowScreen(from - 1);
+  }
+
+  function aConfirm() {
+    const btn = document.getElementById('a-confirm-btn');
+    btn.disabled = true;
+    btn.classList.add('loading');
+    setTimeout(() => {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      // Populate success
+      const dateObj = new Date(aState.date + 'T12:00:00');
+      const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+      const timeStr = aState.time === '9:00' ? '9:00 AM' : aState.time === '10:00' ? '10:00 AM' : aState.time === '14:00' ? '2:00 PM' : aState.time === '15:00' ? '3:00 PM' : '4:00 PM';
+      document.getElementById('succ-datetime').textContent = dateStr + ', ' + timeStr;
+      document.getElementById('succ-duration').textContent = aState.duration + ' min';
+      document.getElementById('succ-email').textContent = aState.email;
+      aShowScreen(4);
+    }, 1400);
+  }
+
+  function aReset() {
+    aState.fname = ''; aState.lname = ''; aState.email = '';
+    aState.type = null; aState.date = ''; aState.time = null; aState.duration = null;
+    document.querySelectorAll('.a-input').forEach(i => i.value = '');
+    document.querySelectorAll('.a-slot.selected').forEach(s => s.classList.remove('selected'));
+    document.querySelectorAll('.a-error-msg').forEach(e => e.classList.remove('show'));
+    aShowScreen(1);
+  }
+
+  // Set min date (2 days from now)
+  (function() {
+    const d = new Date();
+    d.setDate(d.getDate() + 2);
+    const min = d.toISOString().split('T')[0];
+    document.getElementById('a-date').min = min;
+  })();
+
+  // Clear errors on input
+  document.getElementById('a-fname').addEventListener('input', () => document.getElementById('a-fname-err').classList.remove('show'));
+  document.getElementById('a-lname').addEventListener('input', () => document.getElementById('a-lname-err').classList.remove('show'));
+  document.getElementById('a-email').addEventListener('input', () => document.getElementById('a-email-err').classList.remove('show'));
+  document.getElementById('a-date').addEventListener('change', () => document.getElementById('a-date-err').classList.remove('show'));
+</script>
+</body>
+</html>
